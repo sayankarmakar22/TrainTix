@@ -9,6 +9,7 @@ import com.sayan.TrainTix.Services.TrainServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,5 +56,10 @@ public class TrainServiceImpl implements TrainServices {
     public String removeTrain(String trainNumber) {
         trainRepo.deleteById(trainNumber);
         return trainNumber + " has been deleted!!";
+    }
+
+    @Override
+    public List<Train> getAllTrain() {
+        return trainRepo.findAll();
     }
 }

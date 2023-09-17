@@ -9,6 +9,9 @@ import com.sayan.TrainTix.Services.PassengersServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class PassengersServiceImpl implements PassengersServices {
 
@@ -69,5 +72,10 @@ public class PassengersServiceImpl implements PassengersServices {
            runtimeException.printStackTrace();
        }
        return response;
+    }
+
+    @Override
+    public List<Map<String,Object>> getAllPassengers() {
+        return passengersRepo.getAllPassengers();
     }
 }
