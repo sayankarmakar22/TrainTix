@@ -17,7 +17,7 @@ import lombok.ToString;
 @Table(name = "Admin")
 public class Admin {
     @Id
-    private String admin_id;
+    private String adminId;
 
     @Column(length = 100)
     private String name;
