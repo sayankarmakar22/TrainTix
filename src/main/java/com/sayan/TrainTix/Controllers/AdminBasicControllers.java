@@ -25,7 +25,7 @@ public class AdminBasicControllers {
     public ResponseEntity<AdminResponse> getAdminDetails(@RequestParam String adminID){
         return new ResponseEntity<>(adminService.viewAdmin(adminID), HttpStatus.FOUND);
     }
-    @PostMapping("/update-admin")
+    @PutMapping("/update-admin")
     public ResponseEntity<AdminResponse> updateAdminDetails(@RequestBody AdminRequestForUpdation adminRequestForUpdation){
         return new ResponseEntity<>(adminService.updateAdmin(adminRequestForUpdation), HttpStatus.ACCEPTED);
 
