@@ -31,4 +31,9 @@ public class Train {
 
     @Column(length = 50)
     private String destinationStation;
+
+    @Column(length = 10)
+    private String coachType;
+
+    private int fare;
 }
