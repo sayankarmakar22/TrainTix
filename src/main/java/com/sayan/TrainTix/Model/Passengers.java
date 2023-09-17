@@ -15,7 +15,7 @@ import lombok.ToString;
 @Table(name = "Passengers")
 public class Passengers {
     @Id
-    private String user_id;
+    private String userId;
 
     @Column(length = 100)
     private String name;
