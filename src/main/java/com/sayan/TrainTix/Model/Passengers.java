@@ -41,6 +41,5 @@ public class Passengers {
     @Column(length = 1500)
     private String password;
 
-    @OneToOne(mappedBy = "passengers",cascade = CascadeType.ALL)
-    private SeatAllocate seatAllocate;
+
 }

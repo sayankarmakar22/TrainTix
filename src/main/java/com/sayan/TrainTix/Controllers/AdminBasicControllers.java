@@ -4,10 +4,12 @@ import com.sayan.TrainTix.DTO.AdminRequestForUpdation;
 import com.sayan.TrainTix.DTO.AdminResponse;
 import com.sayan.TrainTix.DTO.RegisterPassengersResponse;
 import com.sayan.TrainTix.Model.Admin;
+import com.sayan.TrainTix.Model.Ticket;
 import com.sayan.TrainTix.Model.Train;
 import com.sayan.TrainTix.Repository.TrainRepo;
 import com.sayan.TrainTix.Services.Implementations.AdminServiceImpl;
 import com.sayan.TrainTix.Services.Implementations.PassengersServiceImpl;
+import com.sayan.TrainTix.Services.Implementations.TicketServiceImpl;
 import com.sayan.TrainTix.Services.Implementations.TrainServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,9 @@ public class AdminBasicControllers {
 
     @Autowired
     private TrainServiceImpl trainService;
+
+    @Autowired
+    private TicketServiceImpl ticketService;
 
     @PostMapping("/register-admin")
     public ResponseEntity<AdminResponse> registerAdmin(@RequestBody Admin admin){
@@ -56,5 +61,9 @@ public class AdminBasicControllers {
     @GetMapping("/list-all-train")
     public ResponseEntity<List<Train>> listAllTrain(){
         return new ResponseEntity<>(trainService.getAllTrain(),HttpStatus.FOUND);
+    }
+    @GetMapping("/list-all-booking")
+    public ResponseEntity<List<Ticket>> listAllBookingByTrainNumber(@RequestParam String trainNumber){
+        return new ResponseEntity<>(ticketService.listAllBooking(trainNumber),HttpStatus.FOUND);
     }
 }

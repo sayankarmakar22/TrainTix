@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +18,8 @@ import java.util.Date;
 public class Ticket {
     @Id
     private String ticketNumber;
+
+    private String trainNumber;
 
     @Column(length = 100)
     private String sourceStation;
@@ -31,13 +34,8 @@ public class Ticket {
 
     private Date bookingTime;
 
-    private String departureDate;
+    private long seatNumber;
 
-    private String departureTime;
+    private String passengerId;
 
-    private String phoneNumber;
-
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Passengers passengers;
 }
