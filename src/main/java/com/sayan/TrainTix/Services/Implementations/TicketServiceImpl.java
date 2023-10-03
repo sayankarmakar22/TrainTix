@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -32,71 +34,73 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public synchronized TicketResponse  bookTicket(TicketRequest ticketRequest) {
-        Train foundTrainFromDb = trainRepo.findBytrainNumber(ticketRequest.getTrainNumber());
-        Passengers foundPassengerFromDb = passengersRepo.findByuserId(ticketRequest.getPassengerId());
-        TicketResponse ticketResponse = new TicketResponse();
-        if(((foundTrainFromDb.getTrainNumber().equals(ticketRequest.getTrainNumber())) && (foundPassengerFromDb.getUserId().equals(ticketRequest.getPassengerId()))) ){
+    public synchronized TicketResponse  bookTicket(TicketRequest ticketRequest1) {
+        Queue<TicketRequest> ticketRequestQueue = new LinkedList<>();
+        ticketRequestQueue.add(ticketRequest1);
+        while (!ticketRequestQueue.isEmpty()) {
+            TicketRequest ticketRequest = ticketRequestQueue.poll();
+            Train foundTrainFromDb = trainRepo.findBytrainNumber(ticketRequest.getTrainNumber());
+            Passengers foundPassengerFromDb = passengersRepo.findByuserId(ticketRequest.getPassengerId());
+            TicketResponse ticketResponse = new TicketResponse();
+            if (((foundTrainFromDb.getTrainNumber().equals(ticketRequest.getTrainNumber())) && (foundPassengerFromDb.getUserId().equals(ticketRequest.getPassengerId())))) {
 
-            if(ticketHelper.validateTrainNumberAndPassengerId(ticketRequest.getTrainNumber(),ticketRequest.getPassengerId())){
-                int seatsLeft = ticketHelper.findLeftSeat(ticketRequest.getTrainNumber());
+                if (ticketHelper.validateTrainNumberAndPassengerId(ticketRequest.getTrainNumber(), ticketRequest.getPassengerId())) {
+                    int seatsLeft = ticketHelper.findLeftSeat(ticketRequest.getTrainNumber());
 
-                if((seatsLeft == 0) && (foundTrainFromDb.getCoachType().equals("AC"))){
-                    int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
-                    int acCoachNumber = 13;
-                    int lastThreeDigit = 1;
-                    String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
-                    long finalSeatNumber = Long.parseLong(seatNumber);
-                    Passengers passengers = new Passengers();
-                    passengers.setUserId(ticketRequest.getPassengerId());
-                    Ticket ticket = new Ticket();
-                    Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
-                    Ticket savedTicket = ticketRepo.save(mappingTicket);
-                    return ticketHelper.setTicketResponse(ticketResponse,passengers,finalSeatNumber,foundTrainFromDb,foundPassengerFromDb,savedTicket);
+                    if ((seatsLeft == 0) && (foundTrainFromDb.getCoachType().equals("AC"))) {
+                        int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
+                        int acCoachNumber = 13;
+                        int lastThreeDigit = 1;
+                        String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
+                        long finalSeatNumber = Long.parseLong(seatNumber);
+                        Passengers passengers = new Passengers();
+                        passengers.setUserId(ticketRequest.getPassengerId());
+                        Ticket ticket = new Ticket();
+                        Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
+                        Ticket savedTicket = ticketRepo.save(mappingTicket);
+                        return ticketHelper.setTicketResponse(ticketResponse, passengers, finalSeatNumber, foundTrainFromDb, foundPassengerFromDb, savedTicket);
+                    } else if ((seatsLeft > 0) && (foundTrainFromDb.getCoachType().equals("AC")) && (seatsLeft < foundTrainFromDb.getTotalSeat())) {
+                        int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
+                        int acCoachNumber = 13;
+                        int lastThreeDigit = ticketHelper.findLeftSeat(ticketRequest.getTrainNumber()) + 1;
+                        String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
+                        long finalSeatNumber = Long.parseLong(seatNumber);
+                        Passengers passengers = new Passengers();
+                        passengers.setUserId(ticketRequest.getPassengerId());
+                        Ticket ticket = new Ticket();
+                        Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
+                        Ticket savedTicket = ticketRepo.save(mappingTicket);
+                        return ticketHelper.setTicketResponse(ticketResponse, passengers, finalSeatNumber, foundTrainFromDb, foundPassengerFromDb, savedTicket);
+                    } else if ((seatsLeft == 0) && (foundTrainFromDb.getCoachType().equals("GEN"))) {
+                        int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
+                        int acCoachNumber = 75;
+                        int lastThreeDigit = 1;
+                        String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
+                        long finalSeatNumber = Long.parseLong(seatNumber);
+                        Passengers passengers = new Passengers();
+                        passengers.setUserId(ticketRequest.getPassengerId());
+                        Ticket ticket = new Ticket();
+                        Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
+                        Ticket savedTicket = ticketRepo.save(mappingTicket);
+                        return ticketHelper.setTicketResponse(ticketResponse, passengers, finalSeatNumber, foundTrainFromDb, foundPassengerFromDb, savedTicket);
+                    } else if ((seatsLeft > 0) && (foundTrainFromDb.getCoachType().equals("AC")) && (seatsLeft < foundTrainFromDb.getTotalSeat())) {
+                        int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
+                        int acCoachNumber = 75;
+                        int lastThreeDigit = ticketHelper.findLeftSeat(ticketRequest.getTrainNumber()) + 1;
+                        String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
+                        long finalSeatNumber = Long.parseLong(seatNumber);
+                        Passengers passengers = new Passengers();
+                        passengers.setUserId(ticketRequest.getPassengerId());
+                        Ticket ticket = new Ticket();
+                        Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
+                        Ticket savedTicket = ticketRepo.save(mappingTicket);
+                        return ticketHelper.setTicketResponse(ticketResponse, passengers, finalSeatNumber, foundTrainFromDb, foundPassengerFromDb, savedTicket);
+                    }
                 }
-                else if( (seatsLeft > 0) && (foundTrainFromDb.getCoachType().equals("AC")) && (seatsLeft < foundTrainFromDb.getTotalSeat())){
-                    int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
-                    int acCoachNumber = 13;
-                    int lastThreeDigit = ticketHelper.findLeftSeat(ticketRequest.getTrainNumber()) + 1;
-                    String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
-                    long finalSeatNumber = Long.parseLong(seatNumber);
-                    Passengers passengers = new Passengers();
-                    passengers.setUserId(ticketRequest.getPassengerId());
-                    Ticket ticket = new Ticket();
-                    Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
-                    Ticket savedTicket = ticketRepo.save(mappingTicket);
-                    return ticketHelper.setTicketResponse(ticketResponse,passengers,finalSeatNumber,foundTrainFromDb,foundPassengerFromDb,savedTicket);
-                }
-                else if((seatsLeft == 0) && (foundTrainFromDb.getCoachType().equals("GEN"))){
-                    int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
-                    int acCoachNumber = 75;
-                    int lastThreeDigit = 1;
-                    String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
-                    long finalSeatNumber = Long.parseLong(seatNumber);
-                    Passengers passengers = new Passengers();
-                    passengers.setUserId(ticketRequest.getPassengerId());
-                    Ticket ticket = new Ticket();
-                    Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
-                    Ticket savedTicket = ticketRepo.save(mappingTicket);
-                    return ticketHelper.setTicketResponse(ticketResponse,passengers,finalSeatNumber,foundTrainFromDb,foundPassengerFromDb,savedTicket);
-                }
-                else if((seatsLeft > 0) && (foundTrainFromDb.getCoachType().equals("AC")) && (seatsLeft < foundTrainFromDb.getTotalSeat())){
-                    int curYear = Integer.parseInt(ticketRequest.getTrainNumber());
-                    int acCoachNumber = 75;
-                    int lastThreeDigit = ticketHelper.findLeftSeat(ticketRequest.getTrainNumber()) + 1;
-                    String seatNumber = String.valueOf(curYear) + String.valueOf(acCoachNumber) + String.valueOf(lastThreeDigit);
-                    long finalSeatNumber = Long.parseLong(seatNumber);
-                    Passengers passengers = new Passengers();
-                    passengers.setUserId(ticketRequest.getPassengerId());
-                    Ticket ticket = new Ticket();
-                    Ticket mappingTicket = ticketHelper.setTicketForBooking(ticket, ticketRequest, foundTrainFromDb, foundPassengerFromDb, finalSeatNumber, passengers);
-                    Ticket savedTicket = ticketRepo.save(mappingTicket);
-                    return ticketHelper.setTicketResponse(ticketResponse,passengers,finalSeatNumber,foundTrainFromDb,foundPassengerFromDb,savedTicket);
-                }
+
             }
-
         }
-        throw new RuntimeException("multiple ticket not allowed for individual passenger!!");
+            throw new RuntimeException("multiple ticket not allowed for individual passenger!!");
     }
 
     @Override
