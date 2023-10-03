@@ -10,6 +10,7 @@ import com.sayan.TrainTix.Repository.PassengersRepo;
 import com.sayan.TrainTix.Repository.TicketRepo;
 import com.sayan.TrainTix.Repository.TrainRepo;
 import com.sayan.TrainTix.Services.TicketService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class TicketServiceImpl implements TicketService {
     @Autowired
     private TicketRepo ticketRepo;
 
-
+    @Transactional
     @Override
     public synchronized TicketResponse  bookTicket(TicketRequest ticketRequest) {
         Train foundTrainFromDb = trainRepo.findBytrainNumber(ticketRequest.getTrainNumber());
